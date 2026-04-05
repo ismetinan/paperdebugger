@@ -1,18 +1,13 @@
-export const REDIRECT_URI = `${process.env.PD_API_ENDPOINT || ""}/oauth2`;
+const API_ENDPOINT = "http://localhost:6060";
+export const REDIRECT_URI = `${API_ENDPOINT}/oauth2`;
 
 export function googleAuthUrl(state: string) {
   const url = new URL("https://accounts.google.com/o/oauth2/auth");
 
-  const CLIENT_ID = "259796927285-cdkkp6i69elf660ei3strgj0qrftu6ud.apps.googleusercontent.com";
+  const CLIENT_ID = "89255601614-2l12lj4ct1annk6am15qq7dov0hduogj.apps.googleusercontent.com";
   const SCOPES = ["https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"];
 
-  let redirect_uri = REDIRECT_URI;
-  if (
-    process.env.PD_API_ENDPOINT === "http://localhost:6060" ||
-    process.env.PD_API_ENDPOINT === "http://127.0.0.1:6060"
-  ) {
-    redirect_uri = "https://stg-app.paperdebugger.com/oauth2";
-  }
+  const redirect_uri = REDIRECT_URI;
   url.searchParams.set("client_id", CLIENT_ID);
   url.searchParams.set("redirect_uri", redirect_uri);
   url.searchParams.set("response_type", "token");
@@ -85,7 +80,7 @@ export async function getGoogleAuthToken(): Promise<string | null> {
 
   openInBrowser(googleAuthUrl(randomState));
 
-  const endpoint = `${process.env.PD_API_ENDPOINT || ""}/oauth2/status?state=${randomState}`;
+  const endpoint = `${API_ENDPOINT}/oauth2/status?state=${randomState}`;
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     const res = await fetch(endpoint);
     if (res.status === 410) {
